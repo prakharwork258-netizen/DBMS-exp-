@@ -1,0 +1,87 @@
+
+CREATE DATABASE BankingDB;
+USE BankingDB;
+
+CREATE TABLE Accounts (
+    AccountID INT PRIMARY KEY,
+    AccountHolder VARCHAR(50),
+    Balance DECIMAL(10,2)
+) ENGINE = InnoDB;
+
+INSERT INTO Accounts VALUES
+(101, 'Rahul', 10000.00),
+(102, 'Aman', 8000.00),
+(103, 'Priya', 5000.00);
+
+SELECT * FROM Accounts;
+
+START TRANSACTION;
+
+UPDATE Accounts
+SET Balance = Balance - 2000
+WHERE AccountID = 101;
+
+SAVEPOINT S1;
+
+UPDATE Accounts
+SET Balance = Balance + 2000
+WHERE AccountID = 102;
+
+ROLLBACK TO SAVEPOINT S1;
+
+UPDATE Accounts
+SET Balance = Balance - 500
+WHERE AccountID = 101;
+
+COMMIT;
+
+SELECT * FROM Accounts;
+
+START TRANSACTION;
+
+UPDATE Accounts
+SET Balance = Balance - 1000
+WHERE AccountID = 101;
+
+UPDATE Accounts
+SET Balance = Balance + 1000
+WHERE AccountID = 102;
+
+ROLLBACK;
+
+SELECT * FROM Accounts;
+
+START TRANSACTION;
+
+UPDATE Accounts
+SET Balance = Balance + 1000
+WHERE AccountID = 103;
+
+COMMIT;
+
+SELECT * FROM Accounts;
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+SELECT * FROM Accounts;
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT * FROM Accounts;
+
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+SELECT * FROM Accounts;
+
+SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SELECT * FROM Accounts;
+
+START TRANSACTION;
+
+SELECT Balance FROM Accounts
+WHERE AccountID = 103 FOR UPDATE;
+
+UPDATE Accounts
+SET Balance = Balance + 500
+WHERE AccountID = 103;
+
+COMMIT;
+
+SELECT * FROM Accounts;
